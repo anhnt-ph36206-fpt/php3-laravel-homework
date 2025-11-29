@@ -9,7 +9,8 @@ class SanPhamController extends Controller
 {
     public function index() {
         // dd('Đây là view danh sách sản phẩm');
-        $sanPham = SanPham::all();// Eloquent
+        // $sanPham = SanPham::all();// Eloquent
+        $sanPham = SanPham::paginate(10);// Pagination
         return view('ListSanPham', compact('sanPham'));
     }
 }
