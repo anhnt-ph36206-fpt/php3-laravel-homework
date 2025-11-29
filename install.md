@@ -1,0 +1,7 @@
+-   Clone Project Laravel này từ Github về
+-   Mở Project Laravel này trong Laragon
+-   Sử dụng lệnh cp .env.example .env để sao chép file .env.example thành .env
+-   Chạy lệnh `composer install` để cài đặt các dependency
+-   Chạy lệnh `php artisan key:generate` để tạo key cho ứng dụng
+-   Chạy lệnh `php artisan serve` để chạy ứng dụng
+-   Truy cập ứng dụng tại `http://localhost:8000`
