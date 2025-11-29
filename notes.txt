@@ -1,0 +1,20 @@
+1.  Tạo Model bằng lệnh:
+    +   php artisan make:model tenBang -mfc
+    -> Sẽ tạo ra file 1 model TenBang 
+    -> Sẽ tạo ra file 1 migration TenBang
+    -> Sẽ tạo ra file 1 Factory TenBangFactory
+    -> Sẽ tạo ra file 1 controller TenBangController
+
+2. Khai báo các trường dữ liệu vào file migration
+    -   Ứng dụng GPT để viết migration
+    -   Chạy lệnh:
+        + php artisan migrate
+
+3.  Khai báo dữ liệu Factory và file Factory
+    -   Ứng dụng GPT để viết Factory
+    -   Khai báo factory và file DatabaseSeeder.php
+    -   Chạy lệnh: 
+        + php artisan db:seed 
+4.  Khai báo route gọi vào controller
+5.  Viết controller lấy dữ liệu bằng Eloquent hoặc Query Builder gọi ra view
+6.  Tạo view blade và đổ dữ liệu
