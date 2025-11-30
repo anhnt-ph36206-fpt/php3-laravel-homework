@@ -1,44 +1,56 @@
 <?php
-
 namespace App\Http\Controllers;
 
+use App\Models\DanhMuc;
 use App\Models\SanPham;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
 class SanPhamController extends Controller
 {
-    public function index() {
+    public function index()
+    {
         // dd('Đây là view danh sách sản phẩm');
         // $sanPham = SanPham::all();// Eloquent
 
         $titlePage = 'Quản lý sản phẩm';
-        $title = 'Danh sách sản phẩm';
+        $title     = 'Danh sách sản phẩm';
 
         //  Dùng Query Builder
-        $sanPhams = DB::table('san_phams')
-                    ->join('danh_mucs', 'san_phams.category_id', '=', 'danh_mucs.id')
-                    ->select('san_phams.*', 'danh_mucs.name as category_name')
-                    ->orderBy('san_phams.id', 'desc')
-                    ->paginate(10);
-        
+        // $sanPhams = DB::table('san_phams')
+        //             ->join('danh_mucs', 'san_phams.category_id', '=', 'danh_mucs.id')
+        //             ->select('san_phams.*', 'danh_mucs.name as category_name')
+        //             ->orderBy('san_phams.id', 'desc')
+        //             ->paginate(10);
+        // dd($sanPhams);
+
+        //  Dùng Eloquent ORM
+        $sanPhams = SanPham::with('danhMuc')
+            ->orderBy('id', 'desc')
+            ->paginate(20);
+        // dd($sanPhams);
+
         // $sanPham = SanPham::paginate(10);// Pagination
         return view('admin.sanpham.ListSanPham', compact('sanPhams', 'titlePage', 'title'));
     }
-        /**
+    /**
      * Show the form for creating a new resource.
      */
     public function create()
     {
         // dd('Đã vào được controller thêm sản phẩm');
         $titlePage = 'Quản lý sản phẩm';
-        $title = 'Thêm sản phẩm';
+        $title     = 'Thêm sản phẩm';
 
         //  Dùng Query Builder
-        $danhMucs = DB::table('danh_mucs')
-                        ->get();
+        // $danhMucs = DB::table('danh_mucs')
+        //                 ->get();
 
-        return view('admin.sanpham.CreateSanPham', compact('danhMucs','titlePage', 'title'));
+        //  Dùng Eloquent ORM
+        $danhMucs = DanhMuc::all();
+        // dd($danhMucs);
+
+        return view('admin.sanpham.CreateSanPham', compact('danhMucs', 'titlePage', 'title'));
     }
 
     /**
@@ -57,28 +69,39 @@ class SanPhamController extends Controller
         //  Keywork: Validation Laravel Docs
         //  Available Validation Rules: https://laravel.com/docs/10.x/validation#available-validation-rules
         $request->validate([
-            'name' => 'required|string|max:255',
-            'price' => 'required|integer|min:0', // step 100
-            'stock' => 'required|integer|min:0',
+            'name'        => 'required|string|max:255',
+            'price'       => 'required|integer|min:0', // step 100
+            'stock'       => 'required|integer|min:0',
             'category_id' => 'required|integer|exists:danh_mucs,id', // Phải có id trong bảng danh_mucs thì mưới được thêm
-            'active' => 'nullable|boolean', // nullable: có thể không có giá trị
+            'active'      => 'nullable|boolean',                     // nullable: có thể không có giá trị
         ]);
 
         //  Dùng Query Builder
-        DB::table('san_phams')
-            ->insert([
-                'name' => $request->input('name'),
-                'price' => $request->input('price'),
-                'stock' => $request->input('stock'),
-                'category_id' => $request->input('category_id'),
-                'active' => $request->input('active'), 
-                'created_at' => now(),
-                'updated_at' => now(),
-            ]);
+        // DB::table('san_phams')
+        //     ->insert([
+        //         'name' => $request->input('name'),
+        //         'price' => $request->input('price'),
+        //         'stock' => $request->input('stock'),
+        //         'category_id' => $request->input('category_id'),
+        //         'active' => $request->input('active'),
+        //         'created_at' => now(),
+        //         'updated_at' => now(),
+        //     ]);
+
+        //  Dùng Eloquent ORM
+        SanPham::create([
+            'name'        => $request->input('name'),
+            'price'       => $request->input('price'),
+            'stock'       => $request->input('stock'),
+            'category_id' => $request->input('category_id'),
+            'active'      => $request->input('active'),
+            'created_at'  => now(),
+            'updated_at'  => now(),
+        ]);
 
         //  Redirect về trang danh sách sản phẩm
         return redirect()->route('danh-sach-san-pham.index')
-                         ->with('success', 'Thêm sản phẩm thành công');
+            ->with('success', 'Thêm sản phẩm thành công');
 
     }
 
@@ -90,15 +113,19 @@ class SanPhamController extends Controller
         //
         // dd('Đây là Trang Chi Tiết Sản Phẩm');
         $titlePage = 'Quản lý sản phẩm';
-        $title = 'Thông tin chi tiết sản phẩm';
-        
+        $title     = 'Thông tin chi tiết sản phẩm';
+
         //  Dùng Query Builder
-        $sanPhams = DB::table('san_phams')
-                    ->join('danh_mucs', 'san_phams.category_id', '=', 'danh_mucs.id')
-                    ->select('san_phams.*', 'danh_mucs.name as category_name')
-                    ->where('san_phams.id', $id)
-                    ->first();
-        
+        // $sanPhams = DB::table('san_phams')
+        //             ->join('danh_mucs', 'san_phams.category_id', '=', 'danh_mucs.id')
+        //             ->select('san_phams.*', 'danh_mucs.name as category_name')
+        //             ->where('san_phams.id', $id)
+        //             ->first();
+
+        //  Dùng Eloquuent ORM
+        $sanPhams = SanPham::with('danhMuc')
+            ->find($id);
+
         return view('admin.sanpham.ShowSanPham', compact('sanPhams', 'titlePage', 'title'));
     }
 
@@ -109,15 +136,22 @@ class SanPhamController extends Controller
     {
         //
         $titlePage = 'Quản lý sản phẩm';
-        $title = 'Sửa thông tin sản phẩm';
+        $title     = 'Sửa thông tin sản phẩm';
         // dd($titlePage . ' ' . $title);
 
         //  Dùng Query Builder
-        $sanPhams = DB::table('san_phams')
-                    ->where('id', $id)
-                    ->first();
-        $danhMucs = DB::table('danh_mucs')
-                    ->get();
+        // $sanPhams = DB::table('san_phams')
+        //             ->where('id', $id)
+        //             ->first();
+        // $danhMucs = DB::table('danh_mucs')
+        //             ->get();
+        // dd($sanPhams);
+        // dd($danhMucs);
+
+        //  Dùng Eloquent ORM
+        $sanPhams = SanPham::with('DanhMuc')
+            ->find($id);
+        $danhMucs = DanhMuc::all();
         // dd($sanPhams);
         // dd($danhMucs);
 
@@ -132,31 +166,43 @@ class SanPhamController extends Controller
     {
         // dd($id);
         // Dùng Query Builder
-        $sanPhams = DB::table('san_phams')
-                    ->where('id', $id)
-                    ->first();
-            
-        if (!$sanPhams) {
+        // $sanPhams = DB::table('san_phams')
+        //             ->where('id', $id)
+        //             ->first();
+
+        //  Dùng Eloquent ORM
+        $sanPham = SanPham::findorFail($id);
+
+        if (! $sanPham) {
             return redirect()->route('danh-sach-san-pham.index')
                 ->with('error', 'Sản phẩm không tồn tại');
         } else {
             $request->validate([
-            'name' => 'required|string|max:255',
-            'price' => 'required|integer|min:0', // step 100
-            'stock' => 'required|integer|min:0',
-            'category_id' => 'required|integer|exists:danh_mucs,id', // Phải có id trong bảng danh_mucs thì mưới được thêm
-            'active' => 'nullable|boolean', // nullable: có thể không có giá trị
-        ]);
+                'name'        => 'required|string|max:255',
+                'price'       => 'required|integer|min:0', // step 100
+                'stock'       => 'required|integer|min:0',
+                'category_id' => 'required|integer|exists:danh_mucs,id', // Phải có id trong bảng danh_mucs thì mưới được thêm
+                'active'      => 'nullable|boolean',                     // nullable: có thể không có giá trị
+            ]);
 
+            //  Dùng Query Builder
+            // DB::table('san_phams')->where('id', $id)->update([
+            //         'name' => $request->input('name'),
+            //         'price' => $request->input('price'),
+            //         'stock' => $request->input('stock'),
+            //         'category_id' => $request->input('category_id'),
+            //         'active' => $request->input('active'),
+            //         'updated_at' => now(),
+            //     ]);
 
-        //  Dùng Query Builder
-        DB::table('san_phams')->where('id', $id)->update([
-                'name' => $request->input('name'),
-                'price' => $request->input('price'),
-                'stock' => $request->input('stock'),
+            //  Dùng Eloquent ORM
+            $sanPham->update([
+                'name'        => $request->input('name'),
+                'price'       => $request->input('price'),
+                'stock'       => $request->input('stock'),
                 'category_id' => $request->input('category_id'),
-                'active' => $request->input('active'), 
-                'updated_at' => now(),
+                'active'      => $request->input('active'),
+                'updated_at'  => now(),
             ]);
 
             return redirect()->route('danh-sach-san-pham.index')->with('success', 'Sửa sản phẩm thành công');
@@ -169,18 +215,26 @@ class SanPhamController extends Controller
     public function destroy(string $id)
     {
         // dd('Đây là route xoá sản phẩm');
-        $sanPhams =  DB::table('san_phams')
-            ->where('id', $id)
-            ->first();
+        //  Dùng Query Builder
+        // $sanPhams = DB::table('san_phams')
+        //     ->where('id', $id)
+        //     ->first();
 
-        if (!$sanPhams) {
+        //  Dùng Eloquent
+        $sanPhams = SanPham::find($id);
+
+        if (! $sanPhams) {
             return redirect()->route('danh-sach-san-pham.index')->with('error', 'Sản phẩm không tồn tại');
         } else {
-            DB::table('san_phams')
-                ->where('id', $id)
-                ->delete();
-            return redirect()->route('danh-sach-san-pham.index')->with('delete', 'Xoá sản phẩm <strong>' . "$sanPhams->name" . '</strong> thành công');         
+            //  Dùng Query Builder
+            // DB::table('san_phams')
+            //     ->where('id', $id)
+            //     ->delete();
+
+            //  Dùng Eloquent ORM
+            $sanPhams->delete();
+            return redirect()->route('danh-sach-san-pham.index')->with('delete', 'Xoá sản phẩm <strong>' . "$sanPhams->name" . '</strong> thành công');
         }
-        
+
     }
 }

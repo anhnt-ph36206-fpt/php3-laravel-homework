@@ -18,7 +18,7 @@
                 </tr>
                 <tr>
                     <th>Danh Mục</th>
-                    <td>{{ $sanPhams->category_name ?? '' }}</td>
+                    <td>{{ $sanPhams->danhMuc->name ?? '' }}</td>
                 </tr>
                 <tr>
                     <th>Giá Sản Phẩm</th>

@@ -37,8 +37,11 @@
                 <tr>
                     <td class="text-center">{{ $key + 1 }}</td>
                     <td class="text-center">{{ $sp->name ?? '' }}</td>
-                    <td class="text-center">{{ $sp->category_name ?? '' }}</td>
-                    <td class="text-center">{{ $sp->price ?? '' }}</td>
+                    {{-- Đây là gọi  Query Builder--}}
+                    {{-- <td class="text-center">{{ $sp->category_name ?? '' }}</td> --}}
+                    {{-- Đây là gọi Eloquent ORM --}}
+                    <td class="text-center">{{ $sp->danhMuc->name ?? '' }}</td>
+                    <td class="text-center">{{ number_format($sp->price, 0, ',', '.') . ' VNĐ' ?? '' }}</td>
                     <td class="text-center">{{ $sp->stock ?? '' }}</td>
                     <td class="text-center">{{ $sp->active ? 'Còn Hàng' : 'Hết Hàng' }}</td>
                     <td class="text-center">
