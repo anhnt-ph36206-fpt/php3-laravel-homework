@@ -17,6 +17,9 @@
     @if (session('error'))
         <div class="alert alert-danger" id="error-alert">{{ session('error') }}</div>
     @endif
+    @if (session('delete'))
+        <div class="alert alert-danger" id="delete-alert">{!! session('delete') !!}</div>
+    @endif
     <table class="table table-striped table-hover align-middle">
         <thead class="table-dark">
             <tr class="text-center">
@@ -40,9 +43,16 @@
                     <td class="text-center">{{ $sp->active ? 'Còn Hàng' : 'Hết Hàng' }}</td>
                     <td class="text-center">
                         <div class="btn-group btn-group-sm" role="group" aria-label="Small button group">
-                            <button type="button" class="btn btn-outline-primary">Left</button>
-                            <button type="button" class="btn btn-outline-primary">Middle</button>
-                            <button type="button" class="btn btn-outline-primary">Right</button>
+                            <a href="{{ route('danh-sach-san-pham.show', $sp->id) }}" type="button" class="btn btn-outline-primary">Chi Tiết</a>
+                            <a href="{{ route('danh-sach-san-pham.edit', $sp->id) }}" type="button" class="btn btn-outline-primary">Sửa</a>
+                            <a class="btn btn-outline-primary" 
+                                onclick="if(confirm('Bạn có chắc chắn muốn xoá không ?')) document.getElementById('delete-{{ $sp->id }}').submit();">
+                                Xoá
+                            </a>
+                            <form id="delete-{{ $sp->id }}" action="{{ route('danh-sach-san-pham.destroy', $sp->id) }}" method="POST" style="display: none;">
+                                @csrf
+                                @method('DELETE')
+                            </form>
                         </div>
                     </td>
                 </tr>

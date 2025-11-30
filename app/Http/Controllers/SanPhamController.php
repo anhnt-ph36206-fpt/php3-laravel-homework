@@ -88,6 +88,18 @@ class SanPhamController extends Controller
     public function show(string $id)
     {
         //
+        // dd('Đây là Trang Chi Tiết Sản Phẩm');
+        $titlePage = 'Quản lý sản phẩm';
+        $title = 'Thông tin chi tiết sản phẩm';
+        
+        //  Dùng Query Builder
+        $sanPhams = DB::table('san_phams')
+                    ->join('danh_mucs', 'san_phams.category_id', '=', 'danh_mucs.id')
+                    ->select('san_phams.*', 'danh_mucs.name as category_name')
+                    ->where('san_phams.id', $id)
+                    ->first();
+        
+        return view('admin.sanpham.ShowSanPham', compact('sanPhams', 'titlePage', 'title'));
     }
 
     /**
@@ -96,6 +108,21 @@ class SanPhamController extends Controller
     public function edit(string $id)
     {
         //
+        $titlePage = 'Quản lý sản phẩm';
+        $title = 'Sửa thông tin sản phẩm';
+        // dd($titlePage . ' ' . $title);
+
+        //  Dùng Query Builder
+        $sanPhams = DB::table('san_phams')
+                    ->where('id', $id)
+                    ->first();
+        $danhMucs = DB::table('danh_mucs')
+                    ->get();
+        // dd($sanPhams);
+        // dd($danhMucs);
+
+        return view('admin.sanpham.EditSanPham', compact('sanPhams', 'danhMucs', 'titlePage', 'title'));
+
     }
 
     /**
@@ -103,7 +130,37 @@ class SanPhamController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        //
+        // dd($id);
+        // Dùng Query Builder
+        $sanPhams = DB::table('san_phams')
+                    ->where('id', $id)
+                    ->first();
+            
+        if (!$sanPhams) {
+            return redirect()->route('danh-sach-san-pham.index')
+                ->with('error', 'Sản phẩm không tồn tại');
+        } else {
+            $request->validate([
+            'name' => 'required|string|max:255',
+            'price' => 'required|integer|min:0', // step 100
+            'stock' => 'required|integer|min:0',
+            'category_id' => 'required|integer|exists:danh_mucs,id', // Phải có id trong bảng danh_mucs thì mưới được thêm
+            'active' => 'nullable|boolean', // nullable: có thể không có giá trị
+        ]);
+
+
+        //  Dùng Query Builder
+        DB::table('san_phams')->where('id', $id)->update([
+                'name' => $request->input('name'),
+                'price' => $request->input('price'),
+                'stock' => $request->input('stock'),
+                'category_id' => $request->input('category_id'),
+                'active' => $request->input('active'), 
+                'updated_at' => now(),
+            ]);
+
+            return redirect()->route('danh-sach-san-pham.index')->with('success', 'Sửa sản phẩm thành công');
+        }
     }
 
     /**
@@ -111,6 +168,19 @@ class SanPhamController extends Controller
      */
     public function destroy(string $id)
     {
-        //
+        // dd('Đây là route xoá sản phẩm');
+        $sanPhams =  DB::table('san_phams')
+            ->where('id', $id)
+            ->first();
+
+        if (!$sanPhams) {
+            return redirect()->route('danh-sach-san-pham.index')->with('error', 'Sản phẩm không tồn tại');
+        } else {
+            DB::table('san_phams')
+                ->where('id', $id)
+                ->delete();
+            return redirect()->route('danh-sach-san-pham.index')->with('delete', 'Xoá sản phẩm <strong>' . "$sanPhams->name" . '</strong> thành công');         
+        }
+        
     }
 }
