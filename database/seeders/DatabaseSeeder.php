@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Models\DanhMuc;
 use App\Models\SanPham;
 use App\Models\User;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
@@ -23,6 +24,12 @@ class DatabaseSeeder extends Seeder
         //     'email' => 'test@example.com',
         // ]);
 
+        $tenDanhMucs = ['Áo len', 'Quần âu', 'Áo sơ mi', 'Áo khoác', 'Quần đùi'];
+        foreach ($tenDanhMucs as $key => $value) {
+            DanhMuc::factory()->create([
+                'name' => $value,
+            ]);
+        }
         SanPham::factory(100)->create();
     }
 }

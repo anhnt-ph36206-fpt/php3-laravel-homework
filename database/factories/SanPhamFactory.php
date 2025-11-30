@@ -21,6 +21,7 @@ class SanPhamFactory extends Factory
             'price'  => $this->faker->randomFloat(2, 10000, 2000000), // Giá từ 10k - 2tr
             'stock'  => $this->faker->numberBetween(0, 1000), // Số lượng tồn kho từ 0 - 1000 ngẫu nhiên
             'active' => $this->faker->boolean(90), // Trạng thái hoạt động ngẫu nhiên, 90% là true
+            'category_id' => $this->faker->numberBetween(1, 5), // Id danh mục ngẫu nhiên từ 1 - 5
         ];
     }
 }

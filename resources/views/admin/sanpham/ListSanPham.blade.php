@@ -1,20 +1,28 @@
 @extends('layouts.AdminLayout')
 @section('title-page')
-    Quản Lý Sản Phẩm
+    {{ $titlePage }}
 @endsection
 @section('card-header')
-    <h3 class="card-title">Quản Lý Danh Sách Sản Phẩm</h3>
+    <h3 class="card-title">{{ $title }}</h3>    
     <div class="card-tools">
-        <a href="" class="btn btn-success">Thêm Sản Phẩm</a>
+        <a href="{{ route('danh-sach-san-pham.create') }}" class="btn btn-success">Thêm Sản Phẩm</a>
     </div>
 @endsection
 @section('card-body')
-    <h1>Danh sách sản phẩm</h1>
+    {{-- <h1>Danh sách sản phẩm</h1> --}}
+    {{-- with lưu dữ liệu vào session --}}
+    @if (session('success'))
+        <div class="alert alert-success" id="success-alert">{{ session('success') }}</div>
+    @endif
+    @if (session('error'))
+        <div class="alert alert-danger" id="error-alert">{{ session('error') }}</div>
+    @endif
     <table class="table table-striped table-hover align-middle">
         <thead class="table-dark">
             <tr class="text-center">
                 <th scope="col">STT</th>
                 <th scope="col">Tên Sản Phẩm</th>
+                <th scope="col">Tên Danh Mục</th>
                 <th scope="col">Giá Sản Phẩm</th>
                 <th scope="col">Sản Phẩm Tồn Kho</th>
                 <th scope="col">Trạng Thái Sản Phẩm</th>
@@ -22,10 +30,11 @@
             </tr>
         </thead>
         <tbody>
-            @foreach ($sanPham as $key => $sp)
+            @foreach ($sanPhams as $key => $sp)
                 <tr>
                     <td class="text-center">{{ $key + 1 }}</td>
                     <td class="text-center">{{ $sp->name ?? '' }}</td>
+                    <td class="text-center">{{ $sp->category_name ?? '' }}</td>
                     <td class="text-center">{{ $sp->price ?? '' }}</td>
                     <td class="text-center">{{ $sp->stock ?? '' }}</td>
                     <td class="text-center">{{ $sp->active ? 'Còn Hàng' : 'Hết Hàng' }}</td>
@@ -42,6 +51,6 @@
     </table>
 @endsection
 @section('card-footer')
-    <h3>Trang {{ $sanPham->currentPage() }} / {{ $sanPham->lastPage() }}</h3>
-    {{ $sanPham->links() }}
+    <h3>Trang {{ $sanPhams->currentPage() }} / {{ $sanPhams->lastPage() }}</h3>
+    {{ $sanPhams->links() }}
 @endsection

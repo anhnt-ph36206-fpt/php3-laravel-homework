@@ -11,4 +11,7 @@ Route::get('/admin/home', function () {
     return view('admin.home');
 });
 
-Route::get('/danh-sach-san-pham', [SanPhamController::class, 'index'])->name('danh-sach-san-pham.index');
+// Route::get('/danh-sach-san-pham', [SanPhamController::class, 'index'])->name('danh-sach-san-pham.index');
+
+//  Sử dụng route resource để tạo các route CRUD
+Route::resource('/danh-sach-san-pham', SanPhamController::class);
